@@ -1,0 +1,34 @@
+from sklearn.tree import DecisionTreeClassifier # type: ignore
+import numpy as np # type: ignore
+
+# Simulated symptom data
+symptoms = [
+    "fever cough sore throat",
+    "headache dizziness nausea",
+    "fatigue muscle pain",
+    "fever rash",
+]
+
+suggestions = [
+    "You might have the flu. Stay hydrated and rest.",
+    "You may be experiencing a migraine. Consult a doctor if symptoms persist.",
+    "You might be overworked. Take rest.",
+    "These could be signs of infection. Consult a doctor.",
+]
+
+# Preprocessing symptom data
+symptom_to_vector = {symptom: i for i, symptom in enumerate(symptoms)}
+X = np.array([symptom_to_vector[s] for s in symptoms]).reshape(-1, 1)
+y = suggestions
+
+# Train the model
+clf = DecisionTreeClassifier()
+clf.fit(X, y)
+
+def predict_symptoms(user_input):
+    try:
+        user_symptom_vector = symptom_to_vector[user_input.lower()]
+        suggestion = clf.predict(np.array([user_symptom_vector]).reshape(1, -1))[0]
+        return suggestion
+    except KeyError:
+        return "Sorry, we don't have information for your symptoms. Please consult a doctor."
